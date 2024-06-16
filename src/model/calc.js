@@ -54,15 +54,13 @@ function getMultiple(weeks: number): number {
   return multipleByWeeks.get(closestKey);
 }
 
-export function calculateFeedingAmount(weeks: number, weight: number): number {
-  return Math.min(getMultiple(weeks) * weight, 960)
-}
-
-// 신생아
-// 1-4
-// 5-6 이유식 초기
-// 7-8 이유식 중기
-// 9-11 이유식 후기
+/*
+신생아
+1-4
+5-6 이유식 초기
+7-8 이유식 중기
+9-11 이유식 후기
+ */
 
 export function getFeedingAmount(month: number, weight: number) {
   let multiple = 0
@@ -75,10 +73,9 @@ export function getFeedingAmount(month: number, weight: number) {
   } else if (month < 12) {
     multiple = 70 // 9-12개월 후기 이유식
   } else {
-
   }
 
-  return multiple * weight
+  return Math.min(multiple * weight, 960)
 }
 
 export function getFeedingCount(month: number): Range | null {
