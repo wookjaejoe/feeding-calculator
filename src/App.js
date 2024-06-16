@@ -1,29 +1,51 @@
 import './App.css';
-import {Box, FormControl, FormHelperText, Input, InputAdornment, Typography} from "@mui/material";
-import {Column} from "./components/layout";
+import {Box, Divider, Fab, Link, Tooltip, Typography} from "@mui/material";
+import {Column, Row} from "./view/components/layout";
 import {useState} from "react";
 import styled from "@emotion/styled";
-import {calculateFeedingAmount, getFeedingCount} from "./model/calc";
+import {Colors} from "./view/colors";
+import {UserInput} from "./view/components/UserInput";
+import {getFeedingAmount, getFeedingCount, getLink, monthsFrom} from "./model/calc";
 
 const bgColor = "linear-gradient(120deg,#c0deff 8.18%,#ada9f3 90.92%)"
 const boxShadow = "inset -8px 8px 16px 0 rgba(202,219,252,.6),35px 35px 68px 0 rgba(196,216,253,.5),inset 0 11px 28px 0 hsla(0,0%,100%,.5)"
 const cardBgColor = "rgba(239,246,254,.1)"
 
-const MainCard = styled(Column)`
-  max-width: 100%;
-  width: 100%;
+require("./base/date")
 
-  @media (min-width: 350px) {
-    width: 300px;
-  }
+const ControlPanel = styled(Column)`
+    //max-width: 100%;
+    width: 100%;
+    background: ${cardBgColor};
+        //box-shadow: ${boxShadow};
+    elevation: above;
+    border-radius: 20px;
+    box-sizing: border-box;
+    padding: 32px;
+
+    @media (min-width: 400px) {
+        width: 400px;
+    }
 `;
 
-const darkBlue = "#00008B"
-const dodgerBlue = "#1E90FF"
+const ReportPanel = styled(Column)`
+    @media (min-width: 400px) {
+        width: 400px;
+    }
+`;
 
 function App() {
   const [weeks, setWeeks] = useState("")
   const [weight, setWeight] = useState("")
+  const month = monthsFrom(weeks)
+
+  const feedingAmount = getFeedingAmount(month, weight)
+  const feedingCount = getFeedingCount(month)
+  const today = new Date()
+
+  const x1 = today.minus(weeks * 7).minus(7).toISOString().split("T")[0]
+  const x2 = today.minus(weeks * 7).plus(7).toISOString().split("T")[0]
+  const weeksDesc = weeks ? ` (${Math.round(monthsFrom(weeks) * 10) / 10}개월, ${x1} ~ ${x2} 출생)` : ""
 
   const handleWeeksChange = (e) => {
     const value = e.target.value;
@@ -47,66 +69,79 @@ function App() {
 
   return (
     // Root
-    <Column padding={5} sx={{
+    <Column sx={{
       background: bgColor,
       width: "100vw",
       height: "100vh",
-      justifyContent: "center",
       alignItems: "center",
       boxSizing: "border-box",
-      padding: 6
+      padding: 1
     }}>
-      <Typography variant="h5" color={dodgerBlue} fontWeight="bold">분유량 계산기</Typography>
-      <Box height={20}/>
 
-      <MainCard
-        sx={{
-          background: cardBgColor,
-          boxShadow: boxShadow,
-          borderRadius: "28px",
-          padding: 5
-        }}>
-
-        <FormControl variant="standard" sx={{m: 1, mt: 3, width: "100%", margin: 0, marginTop: 0}}>
-          <Input
-            autoComplete="off"
-            endAdornment={<InputAdornment position="end"><span>주</span></InputAdornment>}
-            onChange={handleWeeksChange}
+      <Fab>
+        <Tooltip title="support: jowookjae@gmail.com" arrow>
+          <Box
+            component="img"
+            sx={{width: "100%"}}
+            src={`${process.env.PUBLIC_URL}/logo192.png`}
           />
-          <FormHelperText id="standard-weight-helper-text">생후 주수</FormHelperText>
-        </FormControl>
+        </Tooltip>
+      </Fab>
 
-        <FormControl variant="standard" sx={{m: 1, mt: 3, width: "100%", margin: 0, marginTop: 0}}>
-          <Input
-            autoComplete="off"
-            endAdornment={<InputAdornment position="end"><span>kg</span></InputAdornment>}
-            onChange={handleWeightChange}
-          />
-          <FormHelperText id="standard-weight-helper-text">몸무게</FormHelperText>
-        </FormControl>
+      <Box height={16}/>
 
-        <Box height={40}></Box>
+      <Typography variant="h5" align="center" color={Colors.dodgerBlue} fontWeight="bold">분유량 계산기</Typography>
 
-        <Box sx={{width: "100%"}}>
-          {
-            weeks && weight ? (
-              <>
-                <Typography>생후 {weeks}주 체중 {weight}kg 아기의 적정 수유량</Typography>
-                <Typography>총 수유량: {calculateFeedingAmount(weeks, weight)}</Typography>
-                <Typography>수유 횟수: {getFeedingCount(weeks).toString()}</Typography>
-              </>
-            ) : (
-              <Typography variant="body1" align="center" color={darkBlue}>
-                아기의 생후 주수와 몸무게를 입력하면<br/>
-                적정 분유량을 계산합니다.
-              </Typography>
-            )
-          }
-        </Box>
+      <Box height={16}></Box>
 
-      </MainCard>
-      <Box height="5px"/>
-      <Typography variant="body2" color={dodgerBlue}>출처: 보건복지부</Typography>
+      <ControlPanel>
+        <UserInput name={"생후 주수" + weeksDesc} suffix="주"
+                   handleChange={handleWeeksChange}/>
+        <UserInput name="몸무게" suffix="kg" handleChange={handleWeightChange}/>
+      </ControlPanel>
+
+      <Box height={24}/>
+
+      {
+        weeks && weight && feedingAmount !== 0 ?
+          <>
+            <ControlPanel sx={{gap: 1}}>
+              <Row justifyContent="space-between">
+                <Typography>1일 수유량</Typography>
+                <Typography>{`${feedingAmount}ml`}</Typography>
+              </Row>
+              <Row justifyContent="space-between">
+                <Typography>1일 수유 횟수</Typography>
+                <Typography>{`${feedingCount}회`}</Typography>
+              </Row>
+              <Divider/>
+              <Row justifyContent="space-between">
+                <Typography>회당 수유량</Typography>
+              </Row>
+              {
+                feedingCount.items.map((value, index) => {
+                  return <Row justifyContent="space-between">
+                    <Typography>하루 {value}번</Typography>
+                    <Typography>한번에 {Math.round(feedingAmount / value)}ml</Typography>
+                  </Row>
+                })
+              }
+            </ControlPanel>
+
+            <Box height={24}/>
+
+            <Link color={Colors.darkBlue} href={getLink(month)} target="_blank" rel="noopener noreferrer">출처: 보건복지부</Link>
+          </>
+          :
+          <Typography variant="body1" align="center" color={Colors.darkBlue}>
+            아기의 생후 주수와 몸무게를 입력하면<br/>
+            적정 분유량을 계산합니다.
+
+            <br/><br/>
+            본 서비스는 <Link color={Colors.darkBlue} href={getLink(month)} target="_blank" rel="noopener noreferrer"
+                         style={{fontWeight: 'bold'}}>보건복지부 가이드라인</Link>을 따릅니다.
+          </Typography>
+      }
     </Column>
   )
     ;
