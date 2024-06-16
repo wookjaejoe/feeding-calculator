@@ -17,7 +17,7 @@ const ControlPanel = styled(Column)`
     //max-width: 100%;
     width: 100%;
     background: ${cardBgColor};
-        //box-shadow: ${boxShadow};
+    box-shadow: ${boxShadow};
     elevation: above;
     border-radius: 20px;
     box-sizing: border-box;
@@ -66,7 +66,7 @@ function App() {
     <Column sx={{
       background: bgColor,
       width: "100vw",
-      height: "100vh",
+      minHeight: "100vh",
       alignItems: "center",
       boxSizing: "border-box",
       paddingX: 1,
@@ -82,13 +82,9 @@ function App() {
           />
         </Tooltip>
       </Fab>
-
-      <Box height={16}/>
-
+      <Box mb={2}/>
       <Typography variant="h5" align="center" color={Colors.dodgerBlue} fontWeight="bold">분유량 계산기</Typography>
-
-      <Box height={16}></Box>
-
+      <Box mb={2}/>
       <ControlPanel>
         <UserInput
           name={"생후 주수" + weeksDesc}
@@ -103,9 +99,7 @@ function App() {
           error={isNaN(parseFloat(weight))}
         />
       </ControlPanel>
-
-      <Box height={24}/>
-
+      <Box mb={2}/>
       {
         weeks && weight && feedingAmount !== 0 ?
           <>
@@ -131,10 +125,9 @@ function App() {
                 })
               }
             </ControlPanel>
-
-            <Box height={24}/>
-
-            <Link color={Colors.darkBlue} href={getLink(month)} target="_blank" rel="noopener noreferrer">출처: 보건복지부</Link>
+            <Box mb={2}/>
+            <Link color={Colors.darkBlue} href={getLink(month)} target="_blank" rel="noopener noreferrer">출처:
+              보건복지부</Link>
           </>
           :
           <Typography variant="body1" align="center" color={Colors.darkBlue}>
