@@ -9,7 +9,7 @@ import {getFeedingAmount, getFeedingCount, getLink, monthsFrom} from "./model/ca
 
 const bgColor = "linear-gradient(120deg,#c0deff 8.18%,#ada9f3 90.92%)"
 const boxShadow = "inset -8px 8px 16px 0 rgba(202,219,252,.6),35px 35px 68px 0 rgba(196,216,253,.5),inset 0 11px 28px 0 hsla(0,0%,100%,.5)"
-const cardBgColor = "rgba(239,246,254,.1)"
+const cardBgColor = "rgba(239,246,254,.2)"
 
 require("./base/date")
 
