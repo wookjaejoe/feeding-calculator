@@ -69,7 +69,8 @@ function App() {
       height: "100vh",
       alignItems: "center",
       boxSizing: "border-box",
-      padding: 1
+      paddingX: 1,
+      paddingY: 4
     }}>
 
       <Fab>
