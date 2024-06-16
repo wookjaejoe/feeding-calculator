@@ -28,12 +28,6 @@ const ControlPanel = styled(Column)`
     }
 `;
 
-const ReportPanel = styled(Column)`
-    @media (min-width: 400px) {
-        width: 400px;
-    }
-`;
-
 function App() {
   const [weeks, setWeeks] = useState("")
   const [weight, setWeight] = useState("")
@@ -95,9 +89,18 @@ function App() {
       <Box height={16}></Box>
 
       <ControlPanel>
-        <UserInput name={"생후 주수" + weeksDesc} suffix="주"
-                   handleChange={handleWeeksChange}/>
-        <UserInput name="몸무게" suffix="kg" handleChange={handleWeightChange}/>
+        <UserInput
+          name={"생후 주수" + weeksDesc}
+          suffix="주"
+          handleChange={handleWeeksChange}
+          error={isNaN(parseFloat(weeks)) || weeks > 52.1}
+        />
+        <UserInput
+          name="몸무게"
+          suffix="kg"
+          handleChange={handleWeightChange}
+          error={isNaN(parseFloat(weight))}
+        />
       </ControlPanel>
 
       <Box height={24}/>
