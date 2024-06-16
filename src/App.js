@@ -91,12 +91,14 @@ function App() {
           suffix="주"
           handleChange={handleWeeksChange}
           error={isNaN(parseFloat(weeks)) || weeks > 52.1}
+          inputProps={{ inputMode: 'numeric' }}
         />
         <UserInput
           name="몸무게"
           suffix="kg"
           handleChange={handleWeightChange}
           error={isNaN(parseFloat(weight))}
+          inputProps={{ inputMode: 'numeric' }}
         />
       </ControlPanel>
       <Box mb={2}/>
